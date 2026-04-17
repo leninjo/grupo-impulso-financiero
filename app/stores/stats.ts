@@ -44,7 +44,13 @@ export const useStatsStore = defineStore('stats', () => {
 		historicalTotal.value = base + (allPayments?.length ?? 0) * amount
 	}
 
+	function reset() {
+		monthlyTotal.value = 0
+		historicalTotal.value = 0
+		monthlyCount.value = 0
+	}
+
 	void fetchStats()
 
-	return { monthlyTotal, historicalTotal, monthlyCount, fetchStats }
+	return { monthlyTotal, historicalTotal, monthlyCount, fetchStats, reset }
 })

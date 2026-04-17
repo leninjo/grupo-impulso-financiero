@@ -51,24 +51,32 @@
 	const supabase = useSupabaseClient()
 
 	const profileStore = useProfileStore()
+	const paymentsStore = usePaymentsStore()
+	const statsStore = useStatsStore()
+	const statusStore = usePaymentStatusStore()
+
 	const { fullName, initials } = storeToRefs(profileStore)
+	const { hasPaid, isPaymentPeriod } = storeToRefs(statusStore)
 
-	const { hasPaid, isPaymentPeriod, checkStatus } = usePaymentStatusStore()
 	const isOpen = ref(false)
-
 	const isChangePasswordOpen = ref(false)
 
 	async function onPaymentSuccess() {
-		await checkStatus()
+		await statusStore.checkStatus()
+	}
+
+	async function handleLogout() {
+		profileStore.reset()
+		paymentsStore.reset()
+		statsStore.reset()
+		statusStore.reset()
+
+		await supabase.auth.signOut()
+		navigateTo('/')
 	}
 
 	const menuItems = [
-		[
-			{
-				label: fullName.value,
-				disabled: true,
-			},
-		],
+		[{ label: fullName.value, disabled: true }],
 		[
 			{
 				label: 'Cambiar contraseña',
@@ -81,10 +89,7 @@
 				label: 'Cerrar sesión',
 				icon: 'i-lucide-log-out',
 				color: 'error' as const,
-				onSelect: async () => {
-					await supabase.auth.signOut()
-					navigateTo('/')
-				},
+				onSelect: handleLogout,
 			},
 		],
 	]

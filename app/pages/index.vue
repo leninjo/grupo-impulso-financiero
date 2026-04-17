@@ -81,6 +81,10 @@
 
 	import type { FormSubmitEvent } from '@nuxt/ui'
 
+	const profileStore = useProfileStore()
+	const statsStore = useStatsStore()
+	const statusStore = usePaymentStatusStore()
+
 	const schema = z.object({
 		email: z.email('Correo inválido'),
 		password: z.string().min(1, 'Contraseña es requerida'),
@@ -107,7 +111,6 @@
 
 	async function handleLogin(event: FormSubmitEvent<Schema>) {
 		loading.value = true
-		errorMsg.value = ''
 
 		const { error } = await supabase.auth.signInWithPassword({
 			email: event.data.email,
@@ -124,6 +127,11 @@
 				color: 'error',
 			})
 		} else {
+			await Promise.all([
+				profileStore.fetchProfile(),
+				statsStore.fetchStats(),
+				statusStore.checkStatus(),
+			])
 			navigateTo('/dashboard')
 		}
 

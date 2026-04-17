@@ -6,7 +6,7 @@ export const usePaymentStatusStore = defineStore('paymentStatus', () => {
 
 	const today = new Date()
 	const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`
-	const isPaymentPeriod = computed(() => today.getDate() <= 8)
+	const isPaymentPeriod = computed(() => today.getDate() <= 31)
 
 	function getNextMonth(monthStr: string) {
 		const parts = monthStr.split('-').map(Number)
@@ -46,7 +46,19 @@ export const usePaymentStatusStore = defineStore('paymentStatus', () => {
 		loading.value = false
 	}
 
+	function reset() {
+		hasPaid.value = false
+		currentAmount.value = 300
+	}
+	
 	void checkStatus()
 
-	return { hasPaid, currentAmount, isPaymentPeriod, loading, checkStatus }
+	return {
+		hasPaid,
+		currentAmount,
+		isPaymentPeriod,
+		loading,
+		checkStatus,
+		reset,
+	}
 })

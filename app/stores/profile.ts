@@ -29,7 +29,11 @@ export const useProfileStore = defineStore('profile', () => {
 		profile.value = data
 	}
 
+	function reset() {
+		profile.value = null
+	}
+
 	void fetchProfile()
 
-	return { profile, fullName, initials, fetchProfile }
+	return { profile, fullName, initials, fetchProfile, reset }
 })

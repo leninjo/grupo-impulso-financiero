@@ -89,6 +89,10 @@ export const usePaymentsStore = defineStore('payments', () => {
 		payments.value = [payment, ...payments.value]
 	}
 
+	function reset() {
+		payments.value = []
+	}
+
 	watch(selectedMonth, fetchPayments, { immediate: true })
 
 	return {
@@ -98,5 +102,6 @@ export const usePaymentsStore = defineStore('payments', () => {
 		selectedMonth,
 		fetchPayments,
 		addPayment,
+		reset,
 	}
 })
