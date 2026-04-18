@@ -1,5 +1,6 @@
-interface Payment {
+export interface Payment {
 	id: string
+	user_id: string
 	created_at: string
 	full_name: string
 	bank: string
@@ -63,6 +64,7 @@ export const usePaymentsStore = defineStore('payments', () => {
 			.select(
 				`
 				id,
+				user_id,
 				created_at,
 				profiles(full_name),
 				banks(name),
@@ -77,6 +79,7 @@ export const usePaymentsStore = defineStore('payments', () => {
 			.filter((p: any) => p.payment_receipts?.length > 0)
 			.map((p: any) => ({
 				id: p.id,
+				user_id: p.user_id,
 				created_at: p.created_at,
 				full_name: p.profiles?.full_name ?? 'Sin nombre',
 				bank: p.banks?.name ?? 'Sin banco',

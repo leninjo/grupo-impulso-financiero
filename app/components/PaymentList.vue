@@ -36,13 +36,15 @@
 				<div class="flex items-center justify-between">
 					<div class="flex flex-col gap-1">
 						<span class="font-semibold text-lg">{{
-							payment.full_name
+							isMine(payment) ? 'Mi aporte' : payment.full_name
 						}}</span>
 						<UButton
 							size="xs"
 							class="justify-center"
 							variant="subtle"
-							label="Ver boleta"
+							:label="
+								isMine(payment) ? 'Mi boleta' : 'Ver boleta'
+							"
 							@click="openReceipt(payment.file_path)"
 						/>
 					</div>
@@ -71,15 +73,28 @@
 </template>
 
 <script setup lang="ts">
+	import type { Payment } from '~/stores/payments'
+
 	const store = usePaymentsStore()
 	const { payments, loading } = storeToRefs(store)
 
 	const supabase = useSupabaseClient()
 
+	const currentUserId = ref<string | null>(null)
+
+	onMounted(async () => {
+		const { data } = await supabase.auth.getUser()
+		currentUserId.value = data.user?.id ?? null
+	})
+
 	const urlCache = new Map<string, string>()
 
 	const selectedReceipt = ref<string | null>(null)
 	const isOpen = ref(false)
+
+	function isMine(payment: Payment) {
+		return payment.user_id === currentUserId.value
+	}
 
 	async function openReceipt(path: string) {
 		if (urlCache.has(path)) {
